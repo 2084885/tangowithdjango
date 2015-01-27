@@ -78,6 +78,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+#Default engine is the SQL lite 3 backend
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
