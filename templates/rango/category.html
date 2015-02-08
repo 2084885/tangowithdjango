@@ -12,14 +12,17 @@
                  {% for page in pages %}
                  <li><a href="{{ page.url }}">{{ page.title }}</a></li>
                  {% endfor %}
-         <br> <a href="/rango/category/{{ category.slug }}/add_page/">Add a page for this category</a>
+        
              </ul>
              {% else %}
                  <strong>No pages currently in category.</strong>
-         <br> <a href="/rango/category/{{ category.slug }}/add_page/">Add a page for this category</a>
+         
              {% endif %}
          {% else %}
              The specified category {{ category_name }} does not exist!
          {% endif %}
+	{% if user.is_authenticated %}
+	<br> <a href="/rango/category/{{ category.slug }}/add_page/">Add a page for this category</a>
+	{% endif %}
      </body>
  </html>
