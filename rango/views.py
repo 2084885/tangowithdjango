@@ -6,7 +6,7 @@ from rango.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import User
 
 def index(request):
     # Query the database for a list of ALL categories currently stored.
@@ -198,8 +198,11 @@ def user_login(request):
                 return HttpResponse("Your Rango account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
-            print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid Username or password.Please try again")
+			try : 
+				User.objects.get( username=username )
+				return HttpResponse("Invalid Password")
+			except:
+				return HttpResponse("User does not exist.")
 
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
@@ -208,10 +211,11 @@ def user_login(request):
         # blank dictionary object...
         return render(request, 'rango/login.html', {})
 		
-		
 @login_required
 def restricted(request):
-    return HttpResponse("Since you're logged in, you can see this text!")
+    return render(request,'rango/restricted.html',{})
+    		
+
 	
 # Use the login_required() decorator to ensure only those logged in can access the view.
 @login_required
