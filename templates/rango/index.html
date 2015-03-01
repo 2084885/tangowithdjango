@@ -8,8 +8,9 @@
 {% block body_block %}
 {% if user.is_authenticated %}
     <h1>Rango says... hello {{ user.username }}!</h1>
+	<p> visits: {{ visits }}</p> 
     {% else %}
-    <h1>Rango says... hello world!</h1>
+    <h1>Rango says... hello world!</h1> 
     {% endif %}
 	<img src="/static/images/vietnampond.jpg" alt="Picture of Vietnam" /> 
         <h1>Top categories</h1>

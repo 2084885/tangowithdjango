@@ -118,6 +118,14 @@ PASSWORD_HASHERS = (
 )
 LOGIN_URL = '/rango/login/'
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True   #True means browser length session
+#False means persistent session
+
+
+#value is an int, specifying the number of seconds before the session ends
+#not the number of closed browsers.
+#SESSION_COOKIE_AGE=
+
 
 
 

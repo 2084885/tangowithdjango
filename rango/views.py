@@ -1,5 +1,6 @@
+from datetime import datetime
 from django.shortcuts import render
-from rango.models import Category,Page
+
 
 from rango.forms import CategoryForm,PageForm
 from rango.forms import UserForm, UserProfileForm
@@ -7,25 +8,88 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from rango.models import Category,Page
 
 def index(request):
-    # Query the database for a list of ALL categories currently stored.
-    # Order the categories by no. likes in descending order.
-    # Retrieve the top 5 only - or all if less than 5.
-    # Place the list in our context_dict dictionary which will be passed to the template engine.
-    category_list = Category.objects.order_by('-likes')[:5]
-    pages_list = Page.objects.order_by('-views')[:5]
-    context_dict = {'categories': category_list, 'pages':pages_list }
 
-    # Render the response and send it back!
-    return render(request, 'rango/index.html', context_dict)
+    category_list = Category.objects.order_by('-likes')[:5]
+    page_list = Page.objects.order_by('-views')[:5]
+
+    context_dict = {'categories': category_list, 'pages': page_list}
+
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 0
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+
+    response = render(request,'rango/index.html', context_dict)
+
+    return response
+
 
 def about(request):
     context_dict={'boldmessage':"This tutorial has been put together by Vian Trieu Dinh,2084885"}
-    return render(request,'rango/about.html',context_dict)
+    count = request.session.get('visits')
+    
+    if not count:
+        count = 0
+    reset_last_visit_time = False
 
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).seconds > 0:
+        # ...reassign the value of the cookie to +1 of what it was before...
+            count = count + 1
+        # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+         reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = count
+    context_dict['visits']=count
+
+    return render(request, 'rango/about.html', context_dict)
+"""
+
+
+def about(request):
+        context_dict={'boldmessage':"This tutorial has been put together by Vian Trieu Dinh,2084885"}
+        
+	visits = request.session.get('visits')
+	if visits:
+	    count = visits
+	    visits = visits + 1
+	else:
+	    count = 0
+        context_dict['visits'] = count
+	return render(request, 'rango/about.html', context_dict)
     #return HttpResponse("ABOUT PAGE <br/> <a href='/rango'>Index</a>   <a href='/rango/contactus'>contactus</a> ")
-#Must leave space between certain links to avoid the underlined links being heaped together.
+    #Must leave space between certain links to avoid the underlined links being heaped together."""
+
 
 def category(request, category_name_slug):
 
@@ -109,13 +173,19 @@ def add_page(request, category_name_slug):
     context_dict = {'form':form, 'category': cat}
 
     return render(request, 'rango/add_page.html', context_dict)
-	
+        
 
 
 def register(request):
-
+    
+    
+                
     # A boolean value for telling the template whether the registration was successful.
     # Set to False initially. Code changes value to True when registration succeeds.
+    
+    
+    
+        
     registered = False
 
     # If it's a HTTP POST, we're interested in processing form data.
@@ -168,8 +238,8 @@ def register(request):
     return render(request,
             'rango/register.html',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
-			
-			
+                        
+                        
 def user_login(request):
 
     # If the request is a HTTP POST, try to pull out the relevant information.
@@ -198,11 +268,11 @@ def user_login(request):
                 return HttpResponse("Your Rango account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
-			try : 
-				User.objects.get( username=username )
-				return HttpResponse("Invalid Password")
-			except:
-				return HttpResponse("User does not exist.")
+                        try : 
+                                User.objects.get( username=username )
+                                return HttpResponse("Invalid Password")
+                        except:
+                                return HttpResponse("User does not exist.")
 
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
@@ -210,13 +280,13 @@ def user_login(request):
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
         return render(request, 'rango/login.html', {})
-		
+                
 @login_required
 def restricted(request):
     return render(request,'rango/restricted.html',{})
-    		
+                
 
-	
+        
 # Use the login_required() decorator to ensure only those logged in can access the view.
 @login_required
 def user_logout(request):
