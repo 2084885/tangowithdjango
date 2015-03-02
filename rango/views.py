@@ -49,29 +49,14 @@ def index(request):
 def about(request):
     context_dict={'boldmessage':"This tutorial has been put together by Vian Trieu Dinh,2084885"}
     count = request.session.get('visits')
-    
-    if not count:
-        count = 0
-    reset_last_visit_time = False
-
-    last_visit = request.session.get('last_visit')
-    if last_visit:
-        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-
-        if (datetime.now() - last_visit_time).seconds > 0:
-        # ...reassign the value of the cookie to +1 of what it was before...
-            count = count + 1
-        # ...and update the last visit cookie, too.
-            reset_last_visit_time = True
+        # If the visits session varible exists, take it and use it.
+    # If it doesn't, we haven't visited the site so set the count to zero.
+    if request.session.get('visits'):
+        count = request.session.get('visits')
     else:
-        # Cookie last_visit doesn't exist, so create it to the current date/time.
-         reset_last_visit_time = True
-
-    if reset_last_visit_time:
-        request.session['last_visit'] = str(datetime.now())
-        request.session['visits'] = count
+        count = 0
     context_dict['visits']=count
-
+    # remember to include the visit data
     return render(request, 'rango/about.html', context_dict)
 """
 
@@ -175,7 +160,7 @@ def add_page(request, category_name_slug):
     return render(request, 'rango/add_page.html', context_dict)
         
 
-
+"""
 def register(request):
     
     
@@ -238,8 +223,9 @@ def register(request):
     return render(request,
             'rango/register.html',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
-                        
-                        
+"""                        
+
+"""                   
 def user_login(request):
 
     # If the request is a HTTP POST, try to pull out the relevant information.
@@ -280,18 +266,21 @@ def user_login(request):
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
         return render(request, 'rango/login.html', {})
+"""
                 
 @login_required
 def restricted(request):
     return render(request,'rango/restricted.html',{})
                 
-
+"""
         
 # Use the login_required() decorator to ensure only those logged in can access the view.
 @login_required
+
 def user_logout(request):
     # Since we know the user is logged in, we can now just log them out.
     logout(request)
 
     # Take the user back to the homepage.
     return HttpResponseRedirect('/rango/')
+"""
