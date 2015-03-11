@@ -37,11 +37,11 @@ TEMPLATE_DIRS = [
 SECRET_KEY = '7_7d97v27(9ha)27@t07j!b8ccb$d1i@&bl+x5zyjlv%%9-)16'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['2084885.pythonanywhere.com']
 
 
 # Application definition
